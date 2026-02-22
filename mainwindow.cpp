@@ -143,10 +143,17 @@ void MainWindow::slotQThread()
         worker->moveToThread(thread);
         connect(thread, &QThread::started, worker, &Worker::doWork);
         connect(worker, &Worker::endWork, thread, &QThread::quit);
-        connect(thread, &QThread::finished, worker, &Worker::deleteLater);  // ??? некорректно отрабатывает на закрытии(если добавить в деструктор) и на clear
+        connect(thread, &QThread::finished, worker, &Worker::deleteLater);
         connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+        connect(thread, &QThread::finished, this, &MainWindow::onDelete);
     }
     startThreads();
+}
+
+void MainWindow::onDelete()
+{
+    vWorkers_.clear();
+    vThreads_.clear();
 }
 
 //-------------------------------------------------------------------

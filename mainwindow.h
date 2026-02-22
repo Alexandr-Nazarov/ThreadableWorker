@@ -60,6 +60,7 @@ private slots:
      * @brief Слот команды запуска потоков
      */
     void slotQThread();
+    void onDelete();
 
 private:
     Ui::MainWindow *ui;
