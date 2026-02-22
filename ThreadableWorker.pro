@@ -32,7 +32,8 @@ SOURCES += \
 HEADERS += \
         mainwindow.h \
     mypoint.h \
-    worker.h
+    worker.h \
+    constants.h
 
 FORMS += \
         mainwindow.ui

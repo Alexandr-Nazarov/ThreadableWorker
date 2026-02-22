@@ -1,8 +1,7 @@
 #include <QObject>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
-int THREADSCOUNT = QThread::idealThreadCount() + 1; //количество потоков
+#include "constants.h"
 //-------------------------------------------------------------------
 //
 MainWindow::MainWindow(QWidget *parent) :
@@ -13,8 +12,6 @@ MainWindow::MainWindow(QWidget *parent) :
     clear_(new QAction("Clear", this))
 {
     ui->setupUi(this);
-
-     qRegisterMetaType<MyPoint>("MyPoint");     // зарегистрируем MyPoint тип
     createmenu();
     connections();
 }
@@ -32,6 +29,7 @@ MainWindow::~MainWindow()
 //
 void MainWindow::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event)
     QPainter painter(this);
     for (const MyPoint &point : vPoints_)
     {
@@ -43,12 +41,12 @@ void MainWindow::paintEvent(QPaintEvent *event)
 //
 void MainWindow::createmenu()
 {
-    this->setMinimumSize(QSize(wk::COUNT * THREADSCOUNT + 20, 100 + (THREADSCOUNT + 1) * 30 + ui->threadsCount->height() * 2));
+    this->setMinimumSize(QSize(wk::COUNT * wk::THREADSCOUNT + 20, 100 + (wk::THREADSCOUNT + 1) * 30 + ui->threadsCount->height() * 2));
     menu_ = menuBar()->addMenu("Commands");
     menu_->addAction(qthread_);
     menu_->addAction(clear_);
 
-    ui->threadsCount->setText("Ideal Thread Count: " + QString::number(THREADSCOUNT));
+    ui->threadsCount->setText("Ideal Thread Count: " + QString::number(wk::THREADSCOUNT));
 }
 
 //-------------------------------------------------------------------
@@ -66,9 +64,9 @@ void MainWindow::connections()
 void MainWindow::createWorkers()
 {
 
-    //qRegisterMetaType<MyPoint>("MyPoint");     // зарегистрируем MyPoint тип
+    qRegisterMetaType<MyPoint>("MyPoint");     // зарегистрируем MyPoint тип
 
-    for (int i = 0; i < THREADSCOUNT; ++i)
+    for (int i = 0; i < wk::THREADSCOUNT; ++i)
     {
         Worker *worker = new Worker(&x_, wk::YSTART + i *30, Qt::GlobalColor(Qt::red + i % (Qt::transparent - Qt::red)), wk::COUNT);
         connect (worker, &Worker::signalAddPoint, this, &MainWindow::slotAddPoint, Qt::QueuedConnection); //Qt::QueuedConnection т.к в разных потоках; и надо зарегистрировать MyPoint
@@ -87,6 +85,7 @@ void MainWindow::deleteWorkers()
             if (worker)
             {
                 delete worker;
+                worker = nullptr;
             }
         }
         vWorkers_.clear();

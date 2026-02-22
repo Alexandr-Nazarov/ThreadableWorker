@@ -67,8 +67,8 @@ private:
     QMenu            *menu_;
     QAction          *qthread_;
     QAction          *clear_;
-    QVector<MyPoint> vPoints_;
     int              x_;            //общая координата для всех потоков
+    QVector<MyPoint> vPoints_;
     QVector<Worker*> vWorkers_;
     QVector<QThread*>vThreads_;
 
